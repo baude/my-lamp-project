@@ -1,0 +1,226 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-4.0.0-dev
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-09-21T20:32:51Z"
+  labels:
+    app: lamp
+  name: lamp
+spec:
+  containers:
+  - args:
+    - mysqld
+    command:
+    - docker-entrypoint.sh
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: GOSU_VERSION
+      value: "1.13"
+    - name: MARIADB_MAJOR
+      value: "10.6"
+    - name: MARIADB_VERSION
+      value: 1:10.6.4+maria~focal
+    image: localhost/mariadb-conf:latest
+    name: xenodochialgauss
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /var/lib/mysql
+      name: home-baude-myproject-mydbstuff-host-0
+    workingDir: /
+  - args:
+    - apache2-foreground
+    command:
+    - docker-php-entrypoint
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: PHP_INI_DIR
+      value: /usr/local/etc/php
+    - name: PHP_CFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_LDFLAGS
+      value: -Wl,-O1 -pie
+    - name: PHP_ASC_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz.asc
+    - name: APACHE_CONFDIR
+      value: /etc/apache2
+    - name: APACHE_ENVVARS
+      value: /etc/apache2/envvars
+    - name: PHP_EXTRA_CONFIGURE_ARGS
+      value: --with-apxs2 --disable-cgi
+    - name: PHP_CPPFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHPIZE_DEPS
+      value: "autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake
+        \t\tpkg-config \t\tre2c"
+    - name: PHP_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz
+    - name: PHP_EXTRA_BUILD_DEPS
+      value: apache2-dev
+    - name: PHP_SHA256
+      value: 409e11bc6a2c18707dfc44bc61c820ddfd81e17481470f3405ee7822d8379903
+    - name: GPG_KEYS
+      value: 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
+    - name: PHP_VERSION
+      value: 7.2.34
+    image: localhost/php-7.2-apache-mysqli:latest
+    name: lucidhermann
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /var/www/html
+      name: home-baude-myproject-mywebstuff-host-0
+    workingDir: /var/www/html
+  dnsConfig: {}
+  initContainers:
+  - args:
+    - sh
+    - -c
+    - mysql_install_db -u root && (mysqld -u root &) && apt-get update && apt-get
+      install -y curl && curl --output - -L  https://github.com/baude/mysql-example/blob/main/world.sql.gz?raw=true  |
+      gunzip -cd | mysql -u root --password=''
+    command:
+    - docker-entrypoint.sh
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: MARIADB_MAJOR
+      value: "10.6"
+    - name: MARIADB_VERSION
+      value: 1:10.6.4+maria~focal
+    - name: GOSU_VERSION
+      value: "1.13"
+    - name: MYSQL_ROOT_PASSWORD
+      value: mypass
+    image: localhost/mariadb-conf:latest
+    name: pricelessgauss
+    ports:
+    - containerPort: 80
+      hostPort: 8080
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /var/lib/mysql
+      name: home-baude-myproject-mydbstuff-host-0
+    workingDir: /
+  - args:
+    - sh
+    - -c
+    - git clone http://github.com/baude/php-example /var/www/html || cd /var/www/html
+      && git pull origin
+    command:
+    - docker-php-entrypoint
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: PHP_CPPFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz
+    - name: PHP_ASC_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz.asc
+    - name: PHP_SHA256
+      value: 409e11bc6a2c18707dfc44bc61c820ddfd81e17481470f3405ee7822d8379903
+    - name: APACHE_CONFDIR
+      value: /etc/apache2
+    - name: GPG_KEYS
+      value: 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
+    - name: PHP_CFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_EXTRA_BUILD_DEPS
+      value: apache2-dev
+    - name: PHP_EXTRA_CONFIGURE_ARGS
+      value: --with-apxs2 --disable-cgi
+    - name: PHP_LDFLAGS
+      value: -Wl,-O1 -pie
+    - name: PHPIZE_DEPS
+      value: "autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake
+        \t\tpkg-config \t\tre2c"
+    - name: APACHE_ENVVARS
+      value: /etc/apache2/envvars
+    - name: PHP_VERSION
+      value: 7.2.34
+    - name: PHP_INI_DIR
+      value: /usr/local/etc/php
+    image: localhost/php-7.2-apache-mysqli:latest
+    name: niftyhugle
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /var/www/html
+      name: home-baude-myproject-mywebstuff-host-0
+    workingDir: /var/www/html
+  restartPolicy: Never
+  volumes:
+  - hostPath:
+      path: /home/baude/myproject/mydbstuff
+      type: Directory
+    name: home-baude-myproject-mydbstuff-host-0
+  - hostPath:
+      path: /home/baude/myproject/mywebstuff
+      type: Directory
+    name: home-baude-myproject-mywebstuff-host-0
+status: {}
+

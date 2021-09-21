@@ -1,0 +1,76 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-4.0.0-dev
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-09-20T17:40:19Z"
+  labels:
+    app: php
+  name: php
+spec:
+  containers:
+  - args:
+    - apache2-foreground
+    command:
+    - docker-php-entrypoint
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: PHP_INI_DIR
+      value: /usr/local/etc/php
+    - name: APACHE_CONFDIR
+      value: /etc/apache2
+    - name: PHP_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz
+    - name: PHP_CFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: GPG_KEYS
+      value: 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
+    - name: PHP_ASC_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz.asc
+    - name: PHPIZE_DEPS
+      value: "autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake
+        \t\tpkg-config \t\tre2c"
+    - name: PHP_CPPFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_VERSION
+      value: 7.2.34
+    - name: PHP_LDFLAGS
+      value: -Wl,-O1 -pie
+    - name: PHP_EXTRA_CONFIGURE_ARGS
+      value: --with-apxs2 --disable-cgi
+    - name: PHP_SHA256
+      value: 409e11bc6a2c18707dfc44bc61c820ddfd81e17481470f3405ee7822d8379903
+    - name: PHP_EXTRA_BUILD_DEPS
+      value: apache2-dev
+    - name: APACHE_ENVVARS
+      value: /etc/apache2/envvars
+    image: php-7.2-apache-mysqli:latest
+    name: greatnapier
+    ports:
+    - containerPort: 80
+      hostPort: 8080
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    workingDir: /var/www/html
+  dnsConfig: {}
+  restartPolicy: Never
+status: {}
+
