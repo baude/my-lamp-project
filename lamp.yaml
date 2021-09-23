@@ -43,8 +43,8 @@ spec:
       seLinuxOptions: {}
     tty: true
     volumeMounts:
-    - mountPath: /var/lib/mysql
-      name: home-baude-myproject-mydbstuff-host-0
+      - mountPath: /var/lib/mysql:Z
+      name: home-baude-my-lamp-project-mydbstuff-host-0
     workingDir: /
   - args:
     - apache2-foreground
@@ -101,8 +101,8 @@ spec:
       seLinuxOptions: {}
     tty: true
     volumeMounts:
-    - mountPath: /var/www/html
-      name: home-baude-myproject-mywebstuff-host-0
+      - mountPath: /var/www/html:Z
+      name: home-baude-my_lamp_project-mywebstuff-host-0
     workingDir: /var/www/html
   dnsConfig: {}
   initContainers:
@@ -148,8 +148,8 @@ spec:
       seLinuxOptions: {}
     tty: true
     volumeMounts:
-    - mountPath: /var/lib/mysql
-      name: home-baude-myproject-mydbstuff-host-0
+      - mountPath: /var/lib/mysql:Z
+      name: home-baude-my_lamp_project-mydbstuff-host-0
     workingDir: /
   - args:
     - sh
@@ -209,18 +209,18 @@ spec:
       seLinuxOptions: {}
     tty: true
     volumeMounts:
-    - mountPath: /var/www/html
-      name: home-baude-myproject-mywebstuff-host-0
+      - mountPath: /var/www/html:Z
+      name: home-baude-my_lamp_project-mywebstuff-host-0
     workingDir: /var/www/html
   restartPolicy: Never
   volumes:
   - hostPath:
-      path: /home/baude/myproject/mydbstuff
+      path: /home/baude/my_lamp_project/mydbstuff
       type: Directory
-    name: home-baude-myproject-mydbstuff-host-0
+    name: home-baude-my_lamp_project-mydbstuff-host-0
   - hostPath:
-      path: /home/baude/myproject/mywebstuff
+      path: /home/baude/my_lamp_project/mywebstuff
       type: Directory
-    name: home-baude-myproject-mywebstuff-host-0
+    name: home-baude-my_lamp_project-mywebstuff-host-0
 status: {}
 
