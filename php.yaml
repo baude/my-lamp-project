@@ -5,10 +5,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: "2021-09-20T17:40:19Z"
+  annotations:
+    bind-mount-selinux-option:/home/baude/my-lamp-project/mywebstuff: Z
+  creationTimestamp: "2021-09-30T15:36:50Z"
   labels:
-    app: php
-  name: php
+    app: lamp
+  name: lamp
 spec:
   containers:
   - args:
@@ -16,47 +18,37 @@ spec:
     command:
     - docker-php-entrypoint
     env:
-    - name: PATH
-      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-    - name: TERM
-      value: xterm
-    - name: container
-      value: podman
-    - name: PHP_INI_DIR
-      value: /usr/local/etc/php
+    - name: PHP_EXTRA_BUILD_DEPS
+      value: apache2-dev
     - name: APACHE_CONFDIR
       value: /etc/apache2
-    - name: PHP_URL
-      value: https://www.php.net/distributions/php-7.2.34.tar.xz
-    - name: PHP_CFLAGS
-      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-    - name: GPG_KEYS
-      value: 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
-    - name: PHP_ASC_URL
-      value: https://www.php.net/distributions/php-7.2.34.tar.xz.asc
-    - name: PHPIZE_DEPS
-      value: "autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake
-        \t\tpkg-config \t\tre2c"
-    - name: PHP_CPPFLAGS
-      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
-    - name: PHP_VERSION
-      value: 7.2.34
-    - name: PHP_LDFLAGS
-      value: -Wl,-O1 -pie
+    - name: PHP_INI_DIR
+      value: /usr/local/etc/php
     - name: PHP_EXTRA_CONFIGURE_ARGS
       value: --with-apxs2 --disable-cgi
     - name: PHP_SHA256
       value: 409e11bc6a2c18707dfc44bc61c820ddfd81e17481470f3405ee7822d8379903
-    - name: PHP_EXTRA_BUILD_DEPS
-      value: apache2-dev
+    - name: PHP_CPPFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_LDFLAGS
+      value: -Wl,-O1 -pie
+    - name: PHP_VERSION
+      value: 7.2.34
+    - name: PHPIZE_DEPS
+      value: "autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake
+        \t\tpkg-config \t\tre2c"
+    - name: PHP_CFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz
+    - name: GPG_KEYS
+      value: 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
+    - name: PHP_ASC_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz.asc
     - name: APACHE_ENVVARS
       value: /etc/apache2/envvars
-    image: php-7.2-apache-mysqli:latest
-    name: greatnapier
-    ports:
-    - containerPort: 80
-      hostPort: 8080
-      protocol: TCP
+    image: localhost/php-7.2-apache-mysqli:latest
+    name: jollyramanujan
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
@@ -69,8 +61,72 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
     tty: true
+    volumeMounts:
+    - mountPath: /var/www/html
+      name: home-baude-my-lamp-project-mywebstuff-host-0
     workingDir: /var/www/html
   dnsConfig: {}
+  initContainers:
+  - args:
+    - sh
+    - -c
+    - git clone http://github.com/baude/php-example /var/www/html || cd /var/www/html
+      && git pull origin
+    command:
+    - docker-php-entrypoint
+    env:
+    - name: PHP_SHA256
+      value: 409e11bc6a2c18707dfc44bc61c820ddfd81e17481470f3405ee7822d8379903
+    - name: APACHE_ENVVARS
+      value: /etc/apache2/envvars
+    - name: PHP_INI_DIR
+      value: /usr/local/etc/php
+    - name: PHP_EXTRA_CONFIGURE_ARGS
+      value: --with-apxs2 --disable-cgi
+    - name: PHPIZE_DEPS
+      value: "autoconf \t\tdpkg-dev \t\tfile \t\tg++ \t\tgcc \t\tlibc-dev \t\tmake
+        \t\tpkg-config \t\tre2c"
+    - name: PHP_ASC_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz.asc
+    - name: PHP_VERSION
+      value: 7.2.34
+    - name: PHP_URL
+      value: https://www.php.net/distributions/php-7.2.34.tar.xz
+    - name: GPG_KEYS
+      value: 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
+    - name: PHP_EXTRA_BUILD_DEPS
+      value: apache2-dev
+    - name: PHP_CPPFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_CFLAGS
+      value: -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+    - name: PHP_LDFLAGS
+      value: -Wl,-O1 -pie
+    - name: APACHE_CONFDIR
+      value: /etc/apache2
+    image: localhost/php-7.2-apache-mysqli:latest
+    name: relaxedborg
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /var/www/html
+      name: home-baude-my-lamp-project-mywebstuff-host-0
+    workingDir: /var/www/html
   restartPolicy: Never
+  volumes:
+  - hostPath:
+      path: /home/baude/my-lamp-project/mywebstuff
+      type: Directory
+    name: home-baude-my-lamp-project-mywebstuff-host-0
 status: {}
 
