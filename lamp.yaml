@@ -194,11 +194,11 @@ spec:
   restartPolicy: Never
   volumes:
   - hostPath:
-      path: /home/baude/my-lamp-project/mydbstuff
+      path: ./mydbstuff
       type: Directory
     name: home-baude-my-lamp-project-mydbstuff-host-0
   - hostPath:
-      path: /home/baude/my-lamp-project/mywebstuff
+      path: ./mywebstuff
       type: Directory
     name: home-baude-my-lamp-project-mywebstuff-host-0
 status: {}
